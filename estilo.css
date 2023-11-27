@@ -15,8 +15,8 @@ body {
 }
 
 .container {
-  /* width: 1200px;
-  height: 767px; */
+  width: 1200px;
+  height: 767px;
   overflow: hidden;
   display: flex;
   position: relative;
