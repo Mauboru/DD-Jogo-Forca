@@ -7,6 +7,7 @@ const elementos = {
   teclado: document.querySelector('.teclado'),
   palavra: document.querySelector('.palavra'),
   dica: document.querySelector('.dica'),
+  opcao: document.querySelector('.opcao'),
   botoes: {
     facil: document.querySelector('.botao-facil'),
     medio: document.querySelector('.botao-medio'),
@@ -157,7 +158,7 @@ function novoJogo() {
   }
   // Cria o teclado na tela do jogo
   criarTeclado();
-}
+};
 
 novoJogo();
 
@@ -189,7 +190,7 @@ function selecionarLetra(letra) {
       mostrarMensagem(false);
     }
   }
-}
+};
 
 function criarTeclado() {
   // Define um array de letras do alfabeto
@@ -217,9 +218,8 @@ function criarTeclado() {
       selecionarLetra(letra);
     });
   }
-}
+};
 
-//MOSTRAR BONECO
 function mostrarErro() {
   // Calcula o índice do elemento da matriz 'elementos.boneco' a ser mostrado com base nas chances restantes
   const parte = elementos.boneco[5 - jogo.chances];
@@ -228,7 +228,6 @@ function mostrarErro() {
   parte.classList.remove('escondido');
 };
 
-// Esta função exibe uma mensagem na tela com base no argumento 'vitoria'.
 function mostrarMensagem(vitoria) {
   // Cria a mensagem com base na condição 'vitoria'.
   const mensagem = vitoria ? '<p>Parabéns!</p><p>Você GANHOU!</p>' : '<p>Que pena!</p><p>Você PERDEU!</p>';
@@ -264,7 +263,7 @@ function sortearPalavra() {
 
   // Retorna a palavra original (embora não seja usado neste código)
   return jogo.palavra.original;
-}
+};
 
 function mostrarPalavra() {
   // Atualiza o elemento de dica na interface do jogo com a dica da palavra atual
@@ -281,7 +280,7 @@ function mostrarPalavra() {
     // Adiciona a letra à interface do jogo como uma div com classe 'letra-i' onde 'i' é a posição da letra na palavra
     elementos.palavra.innerHTML += `<div class="letra-${i}">${letra}</div>`;
   }
-}
+};
 
 function iniciarJogo(dificuldade) {
   // Define a dificuldade do jogo com base no argumento 'dificuldade'
@@ -299,16 +298,7 @@ function iniciarJogo(dificuldade) {
 
   // Mostra a palavra na interface do jogo
   mostrarPalavra();
-}
-
-
-
-
-
-
-
-
-
+};
 
 function substituirCaractere(str, indice, novoCaractere) {
   // Esta função recebe uma string 'str', um índice 'indice' e um novo caractere 'novoCaractere'.
@@ -326,20 +316,13 @@ function substituirCaractere(str, indice, novoCaractere) {
 
   // Retorna a nova string resultante com a substituição feita
   return novaString;
-}
-
-
+};
 
 elementos.botoes.reiniciar.addEventListener('click', () => novoJogo());
 elementos.botoes.voltar.addEventListener('click', () => voltarInicio());
 elementos.botoes.facil.addEventListener('click', () => iniciarJogo('facil'));
-
-
-
-
 elementos.botoes.medio.addEventListener('click', () => iniciarJogo('medio'));
 elementos.botoes.dificil.addEventListener('click', () => iniciarJogo('dificil'));
-
 elementos.botoes.cadastrar.addEventListener('click', () => abrirTelaCadastroPalavra());
 elementos.botoes.realizarCadastro.addEventListener('click', () => cadastrarPalavra());
 
@@ -349,4 +332,61 @@ function voltarInicio() {
 
   // Oculta a tela de cadastro ao definir o estilo 'display' como 'none'.
   elementos.telaCadastro.style.display = 'none';
+}
+
+function abrirTelaCadastroPalavra(){
+  elementos.telaCadastro.style.display = 'flex';
+  elementos.telaInicial.style.display = 'none';
+}
+
+function cadastrarPalavra(){
+  const palavra = elementos.campos.palavra.value.trim();
+  const dica = elementos.campos.dica.value.trim();
+  const dificuldadeSelecionadas = getDificuldadeSelecionada();
+
+  if (palavra.length === 0 || dica.length === 0) {
+    alert('Por favor, preencha todos os campos.');
+    return;
+  }
+
+  if (!dificuldadeSelecionadas) {
+    alert('Por favor, selecione uma dificuldade.');
+    return;
+  }
+
+  if (!/^[a-zA-Z]+$/.test(palavra)) {
+    alert('A palavra deve conter apenas letras.');
+    return;
+  }
+
+  const dificuldadeSelecionada = elementos.campos.dificuldade.facil.checked
+    ? 'facil'
+    : elementos.campos.dificuldade.medio.checked
+    ? 'medio'
+    : 'dificil';
+
+  const limiteLetras = dificuldadeSelecionada === 'facil' ? 5 : dificuldadeSelecionada === 'medio' ? 7 : 9;
+
+  if (palavra.length > limiteLetras) {
+    alert(`A palavra para a dificuldade selecionada deve ter no máximo ${limiteLetras} letras.`);
+    return;
+  }
+
+  palavras[dificuldadeSelecionada].push({ palavra, dica });
+
+  elementos.campos.palavra.value = '';
+  elementos.campos.dica.value = '';
+  voltarInicio();
+}
+
+function getDificuldadeSelecionada() {
+  if (elementos.campos.dificuldade.facil.checked) {
+    return 'facil';
+  } else if (elementos.campos.dificuldade.medio.checked) {
+    return 'medio';
+  } else if (elementos.campos.dificuldade.dificil.checked) {
+    return 'dificil';
+  }
+
+  return null;
 }
